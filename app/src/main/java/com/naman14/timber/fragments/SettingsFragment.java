@@ -46,18 +46,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private static final String LOCKSCREEN = "show_albumart_lockscreen";
     private static final String XPOSED = "toggle_xposed_trackselector";
 
-    private static final String KEY_ABOUT = "preference_about";
-    private static final String KEY_SOURCE = "preference_source";
-    private static final String KEY_THEME = "theme_preference";
-    private static final String TOGGLE_ANIMATIONS = "toggle_animations";
-    private static final String TOGGLE_SYSTEM_ANIMATIONS = "toggle_system_animations";
     private static final String KEY_START_PAGE = "start_page_preference";
-    private boolean lastFMlogedin;
 
-    private Preference nowPlayingSelector,  lastFMlogin, lockscreen, xposed;
+    private Preference nowPlayingSelector, lockscreen, xposed;
 
-    private SwitchPreference toggleAnimations;
-    private ListPreference themePreference, startPagePreference;
+    private ListPreference  startPagePreference;
     private PreferencesUtility mPreferences;
     private String mAteKey;
 
@@ -74,7 +67,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         xposed = findPreference(XPOSED);
 
-        lastFMlogin = findPreference(LASTFM_LOGIN);
         updateLastFM();
 //        themePreference = (ListPreference) findPreference(KEY_THEME);
         startPagePreference = (ListPreference) findPreference(KEY_START_PAGE);
@@ -126,12 +118,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         });
 
-        Intent restoreIntent = new Intent(getActivity(), DonateActivity.class);
-        restoreIntent.putExtra("title", "Restoring purchases..");
-        restoreIntent.setAction("restore");
+      //  Intent restoreIntent = new Intent(getActivity(), DonateActivity.class);
+      //  restoreIntent.putExtra("title", "Restoring purchases..");
+      //  restoreIntent.setAction("restore");
 
-        findPreference("support_development").setIntent(new Intent(getActivity(), DonateActivity.class));
-        findPreference("restore_purchases").setIntent(restoreIntent);
+      //  findPreference("support_development").setIntent(new Intent(getActivity(), DonateActivity.class));
+      //  findPreference("restore_purchases").setIntent(restoreIntent);
 
         lockscreen.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -149,26 +141,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 Bundle extras = new Bundle();
                 extras.putBoolean("xtrack",(boolean)newValue);
                 mPreferences.updateService(extras);
-                return true;
-            }
-        });
-
-        lastFMlogin.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (lastFMlogedin) {
-                    LastFmClient.getInstance(getActivity()).logout();
-                    Bundle extras = new Bundle();
-                    extras.putString("lf_token","logout");
-                    extras.putString("lf_user",null);
-                    mPreferences.updateService(extras);
-                    updateLastFM();
-                } else {
-                    LastFmLoginDialog lastFmLoginDialog = new LastFmLoginDialog();
-                    lastFmLoginDialog.setTargetFragment(SettingsFragment.this, 0);
-                    lastFmLoginDialog.show(getFragmentManager(), LastFmLoginDialog.FRAGMENT_NAME);
-
-                }
                 return true;
             }
         });
@@ -253,15 +225,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
     public void updateLastFM() {
-        String username = LastFmClient.getInstance(getActivity()).getUsername();
-        if (username != null) {
-            lastFMlogedin = true;
-            lastFMlogin.setTitle("Logout");
-            lastFMlogin.setSummary(String.format(getString(R.string.lastfm_loged_in),username));
-        } else {
-            lastFMlogedin = false;
-            lastFMlogin.setTitle("Login");
-            lastFMlogin.setSummary(getString(R.string.lastfm_pref));
-        }
+
     }
 }
